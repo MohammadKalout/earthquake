@@ -25,13 +25,18 @@ export default function LoginPage() {
         navigate('/quake');
       } catch (err) {
         setLoading(false);
-        setError(
-          err.response && err.response.data.message
-            ? err.response.data.message
-            : err.message
-        );
+        if (err.response && err.response.status === 401) {
+          setError('Invalid email or password');
+        } else {
+          setError(
+            err.response && err.response.data.message
+              ? err.response.data.message
+              : err.message
+          );
+        }
       }
     };
+    
   return (
     <section className="bg-fixed bg-cover bg-blue-200 dark:bg-purple-900 overflow-x-hidden">
       <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
@@ -52,6 +57,7 @@ export default function LoginPage() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)} 
                   required />
+                  {error && <div className="text-red-500">{error}</div>}
               </div>
               <div>
                 <label htmlFor="password" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Password</label>
@@ -63,6 +69,7 @@ export default function LoginPage() {
                  value={password}
                  onChange={(e) => setPassword(e.target.value)} 
                  required />
+                 {error && <div className="text-red-500">{error}</div>}
               </div>
               <div className="flex items-center justify-between">
                 <div className="flex items-start">
