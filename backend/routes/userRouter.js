@@ -31,22 +31,28 @@ expressAsyncHandler(async(req,res) => {
 
 
 userRouter.post('/register', expressAsyncHandler(async(req,res) => {
+    const existingUser = await User.findOne({ email: req.body.email });
+    if (existingUser) {
+      return res.status(401).send({ message: "Email Already Taken" });
+    }
   
-  const user = new User({name: req.body.name, email: req.body.email, password: bcrypt.hashSync(req.body.password, 8),
-  });
-  const createdUser = await user.save();
-
-  const refresh = refreshToken(createdUser);
-          res.send({
-              _id : createdUser._id,
-              name : createdUser.name,
-              email : createdUser.email,
-              token : generateToken(createdUser),
-              rToken : refresh
-          });
-      // }
-  })
-  )
+    const user = new User({
+      name: req.body.name,
+      email: req.body.email,
+      password: bcrypt.hashSync(req.body.password, 8),
+    });
+    const createdUser = await user.save();
+  
+    const refresh = refreshToken(createdUser);
+    res.send({
+        _id : createdUser._id,
+        name : createdUser.name,
+        email : createdUser.email,
+        token : generateToken(createdUser),
+        rToken : refresh
+    });
+  }));
+  
 
 
 

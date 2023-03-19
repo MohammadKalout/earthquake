@@ -30,10 +30,18 @@ export default function SignupPage() {
       });
       setLoading(false);
       localStorage.setItem('userInfo', JSON.stringify(data));
-      navigate('/signin');
+      navigate('/');
     } catch (err) {
       setLoading(false);
-      setError(err.response.data.message);
+      if (err.response && err.response.status === 401) {
+        setError('Email Already Token');
+      } else {
+        setError(
+          err.response && err.response.data.message
+            ? err.response.data.message
+            : err.message
+        );
+      }
     }
   };
 
@@ -90,7 +98,7 @@ export default function SignupPage() {
                 {errors.email?.type === 'pattern' && <p className="text-red-500">Invalid email address.</p>}
                 {errors.email?.type === 'maxLength' && <p className="text-red-500">Cannot exceed 255 characters.</p>}
   */}
-
+                {error && <div className="text-red-500">{error}</div>}
               </div>
               <div>
                 <label htmlFor="password" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
